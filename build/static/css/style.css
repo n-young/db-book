@@ -1,0 +1,401 @@
+/* =================================== */
+/* HOUSEKEEPING */
+/* =================================== */
+
+:root {
+    --sm-width: 768px;
+    --md-width: 992px;
+    --lg-width: 1200px;
+
+    --fs-hg: 4rem;
+    --fs-lg: 2rem;
+    --fs-md: 1.3rem;
+    --fs-sm: 1rem;
+
+    --color-black: #303030;
+    --color-white: #fcfcfc;
+    --color-light-gray: #eeeeee;
+    --color-gray: #e5e5e5;
+    --color-yellow: #ffcd1c;
+    --color-light-yellow: #fee48c;
+    --color-brown: #945633;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: "Montserrat", Monaco, sans-serif;
+    font-weight: 400;
+    background-color: var(--color-white);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    color: var(--color-black);
+}
+
+main {
+    margin: auto;
+    width: 90%;
+    max-width: var(--lg-width);
+    min-height: 80vh;
+}
+
+article {
+    margin: auto;
+    width: 90%;
+    max-width: var(--md-width);
+    min-height: 80vh;
+}
+
+section {
+    margin: 100px 0;
+}
+
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    background-color: var(--color-yellow);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 700;
+}
+
+code {
+    font-family: "Inconsolata", Monaco, sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+img {
+    width: 90%;
+    max-width: 500px;
+    max-height: 500px;
+    user-select: none;
+}
+
+iframe {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+
+pre {
+    padding: 10px 20px
+}
+
+a.pdf {
+    color: var(--color-black);
+    font-family: "Montserrat", Monaco, sans-serif;
+    font-size: var(--fs-sm);
+    font-weight: 400;
+    margin-left: 20px;
+}
+
+div.iframe-container {
+    width: 90%;
+    margin: auto;
+    max-width: var(--md-width);
+    height: 600px;
+}
+
+@media screen and (max-width: 768px) {
+    div.iframe-container {
+        height: 400px;
+    }
+}
+
+/* =================================== */
+/* EFFECTS */
+/* =================================== */
+
+.fade {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.fun-letter {
+    display: inline-block;
+    transition: color 0.1s ease-in-out;
+}
+
+.fun-letter:hover {
+    color: var(--color-yellow)
+}
+
+.shake:hover {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    25% {
+        transform: rotate(-12deg);
+    }
+
+    50% {
+        transform: rotate(12deg);
+    }
+
+    75% {
+        transform: rotate(-12deg);
+    }
+}
+
+/* =================================== */
+/* NAVBAR */
+/* =================================== */
+
+nav {
+    margin: 20px 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+div.nav-holder {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+img.nav-logo {
+    width: inherit;
+    height: 4rem;
+}
+
+span.nav-link {
+    margin: 0 10px;
+}
+
+span.nav-link > a {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 700;
+    font-size: var(--fs-md);
+    text-decoration: none;
+    color: var(--color-black);
+}
+
+span.nav-link > a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-yellow);
+}
+
+div.navholder-mobile {
+    display: none;
+}
+
+span.hamburger {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    div.nav-holder {
+        display: none;
+    }
+
+    div.navholder-mobile {
+        display: block;
+        height: 0;
+        width: 100%;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        background-color: var(--color-white);
+        overflow-x: hidden;
+        transition: 0.5s;
+    }
+
+    a.closebtn {
+        display: block;
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        font-size: 40px;
+        color: var(--color-black);
+        text-decoration: none;
+    }
+
+    div.navholder-content {
+        height: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    div.navholder-content > a {
+        display: block;
+        font-family: "Playfair Display", Georgia, serif;
+        font-weight: 700;
+        font-size: var(--fs-lg);
+        text-decoration-color: var(--color-yellow);
+        color: var(--color-black);
+        padding: 8px;
+    }
+
+    span.hamburger {
+        display: block;
+        position: fixed;
+        top: 15px;
+        right: 25px;
+        font-size: 40px;
+        color: var(--color-black);
+    }
+}
+
+/* =================================== */
+/* LANDING */
+/* =================================== */
+
+div.landing-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 10vh 0;
+}
+
+img.landing-logo {
+    width: 300px;
+    margin: 20px;
+}
+
+h1.landing-title {
+    font-size: var(--fs-hg);
+    margin: 0;
+}
+
+h2.landing-subtitle {
+    font-size: var(--fs-lg);
+    margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+    div.landing-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    img.landing-logo {
+        width: 200px;
+        margin: 20px;
+    }
+
+    h1.landing-title,
+    h2.landing-subtitle {
+        margin: 0;
+    }
+}
+
+/* =================================== */
+/* HEXAGON */
+/* =================================== */
+
+.hexagon {
+    position: absolute;
+    z-index: -1;
+    margin-left: -15px;
+    width: 60px;
+    height: 34.64px;
+    background-color: var(--color-light-yellow);
+    opacity: 0.6;
+    transform: scale(1);
+    transition: opacity ease-in-out 0.25s, transform ease-in-out 0.25s;
+}
+
+section:hover > div.hexagon {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.hexagon:before,
+.hexagon:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+}
+
+.hexagon:before {
+    bottom: 100%;
+    border-bottom: 17.32px solid var(--color-light-yellow);
+}
+
+.hexagon:after {
+    top: 100%;
+    width: 0;
+    border-top: 17.32px solid var(--color-light-yellow);
+}
+
+/* =================================== */
+/* TABLE */
+/* =================================== */
+
+table {
+    width: 90%;
+    max-width: var(--md-width);
+    margin: 50px auto;
+}
+
+th,
+td {
+    text-align: center;
+    padding: 10px 5px;
+}
+
+th {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: var(--fs-md);
+    background-color: var(--color-gray);
+}
+
+td {
+    background-color: var(--color-light-gray);
+    border-top: 1px solid lightgrey;
+    transition: background-color linear 0.1s;
+}
+
+tr:hover > td {
+    background-color: var(--color-gray);
+}
+
+td > a {
+    color: var(--color-black)
+}
+
+@media screen and (max-width: 768px) {
+    th,
+    td {
+        padding: 10px 2px;
+    }
+    th {
+        font-size: var(--fs-sm);
+    }
+    td {
+        font-size: var(--fs-xs);
+    }
+}

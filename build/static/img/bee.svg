@@ -1,0 +1,18 @@
+<svg width="292" height="222" viewBox="0 0 292 222" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M146 222L135.608 189.75L156.392 189.75L146 222Z" fill="#303030"/>
+<rect x="84" width="123" height="192" rx="61.5" fill="#FFCD1C"/>
+<mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="84" y="0" width="123" height="192">
+<rect x="84" width="123" height="192" rx="61.5" fill="#FFCD1C"/>
+</mask>
+<g mask="url(#mask0)">
+<rect x="26" y="26" width="227" height="33" fill="#303030"/>
+<rect x="26" y="80" width="227" height="33" fill="#303030"/>
+<rect x="32" y="134" width="227" height="33" fill="#303030"/>
+</g>
+<ellipse cx="72.8382" cy="119.904" rx="77.868" ry="34.845" transform="rotate(-55.4786 72.8382 119.904)" fill="#E9E9E9"/>
+<ellipse cx="92.1602" cy="128.758" rx="77.868" ry="34.845" transform="rotate(-75 92.1602 128.758)" fill="#EEEEEE"/>
+<ellipse rx="77.868" ry="34.845" transform="matrix(-0.566713 -0.823915 -0.823915 0.566713 219.133 119.904)" fill="#E9E9E9"/>
+<ellipse rx="77.868" ry="34.845" transform="matrix(-0.258819 -0.965926 -0.965926 0.258819 199.811 128.758)" fill="#EEEEEE"/>
+<circle cx="123" cy="14" r="5" fill="#303030"/>
+<circle cx="169" cy="14" r="5" fill="#303030"/>
+</svg>

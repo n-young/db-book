@@ -1,0 +1,22 @@
+name: A Short Book on Database Management Systems | ASBoDBMS
+output: build
+static_src: static
+static_dest: static
+
+partials:
+  header: views/partials/header.tmpl
+  chapter-header: views/partials/chapter-header.tmpl
+  footer: views/partials/footer.tmpl
+
+pages:
+  - title: Home
+    path: /
+    template: views/index.tmpl
+    data:
+      chapters: src/data/chapters.yaml
+
+collections:
+  - title: Chapter
+    path: /ch
+    template: views/chapter.tmpl
+    posts: src/chapters
