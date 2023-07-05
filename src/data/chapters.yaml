@@ -1,3 +1,16 @@
 chapters:
+  - title: Disk
+    id: disk
+  - title: Hash Indexes
+    id: hash
+  - title: B+Tree Indexes
+    id: b+tree
+  - title: Query Execution
+    id: query
+  - title: Concurrency
+    id: concurrency
   - title: Locking
     id: locking
+  - title: Recovery
+    id: recovery
+    
