@@ -1,13 +1,13 @@
 chapters:
   - title: Databases
     id: databases
-  - title: Disk
-    id: disk
-  - title: Hash Indexes
-    id: hash
-  - title: B+Tree Indexes
-    id: b+tree
-  - title: Query Execution
+  - title: Interfaces
+    id: interface
+  - title: Storage
+    id: storage
+  - title: Indexing
+    id: index
+  - title: Query Engine
     id: query
   - title: Concurrency
     id: concurrency

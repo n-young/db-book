@@ -2,11 +2,9 @@
 title: Databases
 ---
 
-## Databases
-
 Welcome to the wonderful world of databases! My goal in writing this is to demystify how exactly the largest and smallest companies store and process data from first principles. Throughout these articles, you'll learn about the techniques that have shaped most modern databases, and even potentially be able to build one yourself.
 
-At its core, a database needs to fulfill two goals: data storage and data retrieval. Databases must be build to store obscene amounts of data, as well as scale as your business needs grow. They must store data quickly and reliably, such that data is never lost or corrupted. They must also be able to answer arbitrarily complex questions about that data in a timely fashion, as well as support multiple users at a time. While this might seem like a rather simple task given modern abstractions like, say, an operating system, it is indeed not a trivial endeavour.
+At its core, a database needs to fulfill two goals: data storage and data retrieval. Databases must be built to store obscene amounts of data, as well as scale as your business needs grow. They must store data quickly and reliably, such that data is never lost or corrupted. They must also be able to answer arbitrarily complex questions about that data in a timely fashion, as well as support multiple users at a time. While this might seem like a rather simple task given modern abstractions like, say, an operating system, it is indeed not a trivial endeavour.
 
 ## Why do we need Databases?
 
@@ -57,7 +55,7 @@ Aside from this contrived example, databases provide a suite of incredibly power
 
 ## Components of a Databases
 
-Now that you've seen _why_ we should build a database, we should get into the broad strokes of _how_ a databases is build. This section serves doubly as a roadmap for the rest of the webbook, as we will tackle these components in the order that they are presented.
+Now that you've seen _why_ we should build a database, we should get into the broad strokes of _how_ a databases is built. This section serves doubly as a roadmap for the rest of the webbook, as we will tackle these components in the order that they are presented.
 
 Any good program has an interface, and for databases, this interface takes the form of a **Data Definition Language (DDL)** and **(Data) Query Language (QL)**. An incredibly popular DDL and Query Language is SQL, which stands for **Structured Query Language**. SQL gives users a way to communicate inserts, updates, deletes, and selections of data (among many other things) in a human-parsable way. However, it is far from the only language. Another tool called **Relational Algebra** allows us to express the same queries as SQL can in a more mathematical notation. Choosing and using a language as the database's interface has become the industry norm, and also gives us great insight into what customers are likely to request from a database.
 
@@ -66,6 +64,8 @@ A database is also useless without a storage engine, typically backed by both di
 To answer questions about the data, a database needs a query engine. This query engine is typically aided by a set of indexes which are built over the data, which provide quick and easy lookup and discovery of data to make answering queries faster. A query engine is typically separated into two components: a query optimizer and a query executor. A query optimizer takes in a query and rewrites it to be as easy to execute as possible, while a query executor takes an optimized plan and actually runs it. While the lines between these two components may blur, they together form the query engine.
 
 On top of these components, the database may be outfitted with extra machinery to ensure that it works in a distributed or multi-tenant setting. We'll get to these concerns later.
+
+<!-- TODO: Diagram of a database -->
 
 ## Different Needs, Different Databases
 
