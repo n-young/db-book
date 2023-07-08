@@ -1,4 +1,6 @@
 chapters:
+  - title: Databases
+    id: databases
   - title: Disk
     id: disk
   - title: Hash Indexes
@@ -13,4 +15,3 @@ chapters:
     id: locking
   - title: Recovery
     id: recovery
-    

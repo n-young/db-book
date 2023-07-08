@@ -2,17 +2,19 @@
 title: Disk
 ---
 
- 
+## Disk
+
+
 
 ## Pages
 
-Given a set of records, we have many potential strategies of storing them in a file. One strategy is called a heap file, where the database is represented as a single, unorganized file, and records are inserted wherever there is space for it. However, heap files are not particularly organized; if you built an index over the entire file, there won't be a good way to use it without reading the entire index into memory. As you insert and delete data, fragmentation will lead to wasted space. And so on.
+Given a set of records, we have many potential strategies of storing them in a file. One strategy is called a heap file, where the database is represented as a single, unorganized file, and records are inserted wherever there is space for it. However, heap files are not particularly organized. As you insert and delete data, especially if the data is not fixed-size, fragmentation in your file will lead to wasted space.
 
-Although we like to think of data in terms of bits and bytes, our disk and operating system handle data in units of pages. Formally, a **page** is the smallest amount of data that can be guaranteed to be written to disk in a single atomic operation, traditionally fixed at a uniform size such as 4096 bytes. In other words, our operating system exclusively read from and write to disk in blocks of 4096 bytes. We can leverage this feature of our operating system to create a more organized and flexible storage scheme.
+Although we like to think of data in terms of bits and bytes, our disk and operating system handle data in units of pages. Formally, a **page** is the smallest amount of data that can be guaranteed to be written to disk in a single atomic operation, traditionally fixed at a uniform size, such as 4096 bytes. In other words, our operating system exclusively read from and write to disk in blocks of 4096 bytes. We can leverage this feature of our operating system to create a more organized and flexible storage scheme.
 
-It's worth noting that these days, multiple page sizes are supported on various architectures. Additionally, database systems are free to set their own page sizes to multiples of the underlying system's page size. However, these design choices come with various tradeoffs. **In BumbleBase, database pages will follow the page size of the hardware and operating system, i.e. database pages will contain 4096 bytes** (`PAGESIZE` in `pager.go`).
+> It's worth noting that these days, multiple page sizes are supported on various architectures. Additionally, database systems are free to set their own page sizes to multiples of the underlying system's page size. However, these design choices come with various tradeoffs.
 
-Each page is given a unique page id that can be used to determine the offset in the file where it belongs. In our scheme, the 0th page takes up bytes 0-4095, the 1th page takes up bytes 4096-8191, and so forth. In general, other systems may have other ways of mapping page id to page offset (using a page directory or other data structure).
+TODO: Different kinds of disks, sequential reads, random reads, TTL, SSDs, persistent memory
 
 ### Disk Manager
 
