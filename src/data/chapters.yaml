@@ -1,16 +1,16 @@
 chapters:
   - title: Databases
     id: databases
-  - title: Interfaces
-    id: interface
+  # - title: Interfaces
+  #   id: interface
   - title: Storage
     id: storage
   - title: Indexing
     id: index
   - title: Query Engine
     id: query
-  - title: Concurrency
-    id: concurrency
+  - title: Transactions
+    id: transactions
   - title: Locking
     id: locking
   - title: Recovery

@@ -1,10 +1,26 @@
 ---
-title: B+Tree Locking Algorithm
+title: Locking
 ---
+
+## Fine-Grain Locking
+
+Fine-grain locking is a locking technique that involves locking a part of a data structure to ensure safe access rather than locking the entire data structure. In B+Trees, this means only locking the nodes that we're currently looking at, and in a hash table, this means only locking the buckets we're currently looking at. Clearly this is desirable - now we can have multiple tenants safely traversing and modifying the data structure at the same time, leading to huge speed ups. However, getting fine-grain locking right is incredibly nuanced, as you'll learn in this assignment.
+
+### Fine-Grain Locking on Hash Tables
+
+Hash tables are rather simple structures to lock; the only entrypoints into a bucket are through the lookup table. Therefore for each read or write, we only need to lock the lookup table, then the bucket!
+
+On reads, we first acquire a read lock on the lookup table, then find our bucket. Next, we acquire a read lock on our bucket, then release our read lock on the lookup table, read our value, then release our read lock from the bucket.
+
+On writes, we first acquire a read lock on the lookup table, then find and lock our bucket. We could have grabbed a write lock, but there's no need to grab a write lock on the lookup table unless we are sure that we are going to split; this is called **optimistic locking**, and can reduce unnecessary waiting for locks. After we've grabbed a write lock on the bucket, we check if we could potentially split (which essentially means checking if the bucket is currently full); if so, we grab a write lock on the lookup table and complete our insert and split. If we don't split, we simply insert. Afterwards, we release all of our locks. You aren't required to perform optimistic locking in this assignment - it's perfectly find just to grab the write lock from the get go. However, do ensure that you release the write lock if you don't need to hold onto it - otherwise, it's not fine-grain locking at all!
+
+### Fine-Grain Locking on B+Trees
+
+> NOTE: The following is ripped directly from the explanation for the B+Tree locking mechanism for BumbleBase, the database implemented in CSCI 1270 at Brown University. I didn't feel like adapting it or writing about locking for hash tables, since it's pretty obvious how that works.
 
 This database implements a version of lock crabbing, optimized for each of instrumentation. Since it is a rather unique implementation, we've decided to write up a full explanation of the algorithm.
 
-## The Simple Case
+### The Simple Case
 
 Let's say we want to lock a B+Tree to be thread-safe. Assume for now that we won't change the structure of the B+Tree while we traverse it (i.e. we will not cause a split). Then, the locking scheme is rather simple:
 
@@ -20,7 +36,7 @@ unlock(current)
 
 Critically, we do what is more commonly known as **hand-over-hand locking**, which ensures that we always have at least one point of contact in the database. If we flipped the lock of the child node and the unlock of the current node, there will be a split second where the child could move out from underneath us, making our locking algorithm unsafe. Thus, we always ensure that we are holding at least one lock until we finish.
 
-## The Complex Case
+### The Complex Case
 
 We've just gone over the simple case, which is the case where we can't cause a split. Let's lift this assumption and see what happens as a result.
 
@@ -60,7 +76,7 @@ And a last one:
 
 In this case, when we arrive at the leaf node, we can check that it will never split, meaning that we can unlock all of its parent nodes.
 
-## The Complex Case + Splitting
+### The Complex Case + Splitting
 
 So far we have an incomplete policy. Here it is in summary:
 
@@ -105,7 +121,7 @@ else:
 This completes our protocol.
 
 
-## Implementation Details
+### Implementation Details
 
 There are two final details that are worth considering.
 

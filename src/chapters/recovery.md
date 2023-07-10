@@ -2,6 +2,8 @@
 title: Recovery
 ---
 
+<!-- TODO: This needs a lot more detail -->
+
 ## Write-Ahead Logging
 
 When our database crashes, we lose everything that was stored in volatile memory. Write-ahead logging aims to solve this problem by storing enough information to recreate the state of the database after a crash.
