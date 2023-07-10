@@ -78,5 +78,3 @@ Traditionally, databases could be siloed off into two main categories of workloa
 It's worth noting two special phenomena in the database world before closing. Firstly, databases that store much less structured data, called NoSQL databases, have taken the world by storm. Indeed, they are much easier to write and work with, and scale much better in the global setting (we will see why much later). However, with this ease of use and growth comes loss of structure, and many guarantees we got with traditional databases no longer apply. While it is a popular choice, it should not necessarily be the default.
 
 Secondly, special purpose databases like time-series databases, graph databases, geospatial databases, and others have begun to crop up as well. These databases are often built to realize a very specific business need, such as signal monitoring, social networks, or car routing. While they are not very useful for the generic customer, they've found an audience.
-
-

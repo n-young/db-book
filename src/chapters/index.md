@@ -54,7 +54,7 @@ On **deletion** of a row $R$, the search key $r_i$ is hashed, and then the table
 
 When a value is inserted into a hash table, one of two things can happen: either the bucket doesn't overflow, or the bucket does overflow. If it overflows, then we need to **split** our bucket. To split a bucket, we create a new bucket with the same search key as the bucket that overflowed, but with a "1" prepended to it. We then prepend a "0" to the original bucket's search key. As an example, if a bucket with a local depth of 3 and search key "101" splits, we would be left with two buckets, each of local depth 4 and with search keys "0101" and "1101" respectively. Then, we transfer values matching the new search key from the old bucket to the new bucket, and we are done.
 
-*It's worth noting that while we talk about "prepending" as if we are dealing with strings, in actuality, this action is done entirely through the bit-level representation of integers. Think about what you would have to add to a search key to effectively prepend its bit representation with a 1 or a 0. Hint: it has something to do with powers of 2.*
+*It's worth noting that while we talk about "prepending" as if we are dealing with strings, in actuality, this action is done entirely through the bit-level representation of integers. Think about what you would have to add to a search key to effectively prepend its bit representation with a 1 or a 0.*
 
 <!-- TODO: Extensible Hashing Splitting Diagram -->
 
@@ -62,13 +62,9 @@ If a bucket overflows and ends up with a local depth greater than the global dep
 
 It is possible that after a split, all of the values in the old bucket ended up in the same bucket, immediately triggering a second split. This can be caused by a bad hash function (imagine a hash function that maps all inputs to the same output), too many duplicates, or due to an *adversarial workload*. There are many ways to handle recursive splitting, all of which are outside the scope of this chapter.
 
-<!-- TODO: A worked example of insertions and splits -->
-
-<!-- ### TODO: Linear Hashing -->
+Other hash-based algorithms such as linear hashing exist. We'll move on to tree-based schemes now, however.
 
 ## Tree-based Indexing
-
-<!-- TODO: This could be a bit more carefully done -->
 
 Tree-based indexing schemes allow for logarithmic-time inserts, updates, and deletions, while also support range questions. In a database, being able to respond with all of the tuples that match a certain range is very useful, which is why the following data structures are used ubiquitously in database systems.
 
@@ -129,6 +125,10 @@ The operations in a B+Tree are slightly different:
 **Deletion** - to delete a value, we first find the value in a leaf node(if it exists), then we remove it. This operation becomes rather complicated when nodes underflow (less than $\lceil m/2 \rceil$ children), or when deleting a value from an internal node; we leave it as an exercise to the reader to explore this operation.
 
 To explore how some of these B+Tree operations work, try out this [online visualization](https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html).
+
+#### Disk Representation
+
+For both BTrees and B+Trees, each node is typically represented by one page. This means that the number of entries in an internal or leaf node is determines by the page and entry size. Moreover, leaf nodes may contain the row itself if the data is small, but may instead contain the location of the row in data blocks. The former is necessary for secondary indexes.
 
 #### Node Splitting
 

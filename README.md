@@ -4,16 +4,7 @@ This website is built using [Goo](https://github.com/n-young/goo). Ensure that y
 
 To build the website, run `go get github.com/n-young/goo`, then `go build site.yaml`. The site wil be exported to the `build/` directory. See the Goo documentation for information on how to use it. Alternatively, you can use the `Makefile` targets `build` and `serve`.
 
-## TODO
+## Future Work
 
-- Relational Algebra?
-- Constraints?
-- Disk and Memory
-- Indexing
-- B+Trees
-- Hash Tables
-- Query Processing
-- Query Optimization
-- Concurrency
-- Transactions
-- Recovery
+- Write the Interfaces chapter
+- Write about linear hashing

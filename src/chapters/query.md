@@ -16,8 +16,6 @@ The main issue to worry about is duplicity; if we ever come across the same pair
 
 You may also have noticed that each pair of buckets has a disjoint result set (think about what it would mean if result sets weren't disjoint), indicating that there is room for parallelization. Our stencil code implements parallelized joins for you using channels.
 
-<!-- TODO: An example of execution -->
-
 ## Bloom Filters
 
 One inefficiency in a hash join is that you potentially have to iterate through an entire bucket to find a value. To do that for every search value is really expensive - if we could speed up our search time somehow, that would be a huge win! Unfortunately, maintaining a bucket ordering doesn't really make sense just for a one-time search, and building an index over such a small data structure is overkill.
