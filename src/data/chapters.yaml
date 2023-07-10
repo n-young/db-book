@@ -13,5 +13,5 @@ chapters:
   #   id: transaction
   - title: Locking
     id: locking
-  # - title: Recovery
-  #   id: recovery
+  - title: Recovery
+    id: recovery
