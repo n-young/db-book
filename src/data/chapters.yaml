@@ -7,11 +7,11 @@ chapters:
     id: storage
   - title: Indexing
     id: index
-  - title: Query Engine
+  - title: Query Evaluation
     id: query
-  - title: Transactions
-    id: transaction
+  # - title: Transactions
+  #   id: transaction
   - title: Locking
     id: locking
-  - title: Recovery
-    id: recovery
+  # - title: Recovery
+  #   id: recovery
