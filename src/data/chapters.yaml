@@ -10,7 +10,7 @@ chapters:
   - title: Query Engine
     id: query
   - title: Transactions
-    id: transactions
+    id: transaction
   - title: Locking
     id: locking
   - title: Recovery
