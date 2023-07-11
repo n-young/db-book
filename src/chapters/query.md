@@ -27,6 +27,8 @@ Consider a query plan with the following substructure: $\sigma_{A_c}(A \bowtie B
 
 Consider a query plan with a complicated conjunctive condition in a filter, like: $\sigma_{c_1 \wedge c_2 \wedge c_3}(A)$. We can instead apply the filters one after another in order, like so: $\sigma_{c_1}(\sigma_{c_2}(\sigma_{c_3}(A)))$. We can commute these conjunctions in any order (do to commutativity of boolean operators) and choose the order that will leave us with the smallest relation as early as possible. The reason this may save some time is that it allows us to spend less time evaluating unnecessary parts of the predicate. However, if the predicate is simple, this optimization may only end up hurting our computation as we are usually disk- instead of cpu-bound. However, the inverse optimization is also valid, in case we want to combine multiple selections! This optimization is called **cascading conjunctions**.
 
+<!-- TODO: Selectivity Factors (in System R) -->
+
 Consider a query plan that only outputs column $c$ of a set of columns $C$ of a schema $S$, without operating on any other columns. Then, instead of selecting all of the columns of $S$, we can instead only select values in $c$. In other words, we will add a projection after the selection to limit the amount of unused information flowing through our query. This optimization is called **column filtering**.
 
 Many such rules can be dreamt up and used, and depending on slight changes in the data and execution model, different rules could be effective. Choices on whether to apply each rule once or many times or until convergence are up to the database designer.
@@ -34,6 +36,8 @@ Many such rules can be dreamt up and used, and depending on slight changes in th
 ## Query Execution Algorithms
 
 Now that we've reduced our logical query plan to a more optimized form, we'll need to decide how exactly we should execute it; that is, which algorithms we should ask our database engine to use to evaluate each step of the query plan. Indeed, for each operation we could be doing, multiple valid algorithms exist with different time and space complexities. We'll go over the canonical algorithms for joins (algorithms for selection boil down to using indexes when we can, and for the rest are not particularly interesting).
+
+<!-- TODO: Page and index scans -->
 
 ### Loop Joins
 
@@ -85,13 +89,22 @@ Applying this to the Grace hash join, we will construct Bloom filters on each bu
 
 ### Sort Merge Joins
 
+<!-- TODO: Explain this better -->
+
 In the case that our input relations are sorted, we can use a **sort merge join**. A sort merge join essentially uses one pointer per relation, and runs through each relation outputting pairs that match on the join key. Special case should be taken when there are duplicates, but this is an overall rather intuitive algorithm to describe and implement. The difficult part is sorting the relation.
 
 If the relation isn't already sorted by primary key, then we have to do some work to sort it. Thankfully, the classic merge sort algorithm generalizes great to our setting, because we can treat each block like an array segment. However, instead of doing the entire search in memory, we write out intermediate sorted blocks. The algorithm proceeds as follows: first, sort each block in memory and write it out to disk. Then, take pairs of adjacent blocks into disk, and merge sort them, writing the intermediate blocks out to disk. Then, take the first block of two sorted segments, and merge sort those two until reaching the end of a block, in which case moving on to the next block in that segment. It proceeds until the whole segment is sorted and on disk.
 
+<!-- TODO: Extenal Sort -->
+
 Since when we are on iteration $k$, data from iteration $k-2$ is now useless, we can get away with only using $2N$ extra bytes of space if the original relation was stored using $N$ bytes. Once we have a sorted relation we can apply sort merge join.
 
+<!-- TODO: Didn't explain sort merge join LOL -->
+
+<!-- TODO: Parallelizing multiple joins -->
+
 Now that we've seen a plethora of join algorithms, it's time to see how the cost-based optimizer takes these candidate algorithms into account and decides on a physical query plan.
+
 
 ## Cost-Based Optimization
 
@@ -99,6 +112,12 @@ To decide on a query plan, the optimizer repeatedly proposes a physical plan and
 
 The optimizer can't compute cost without some statistics about the database. Most databases collect metadata about the size of their tables, the relative density and distribution of the data, and other metrics that may be useful in query planning. Indeed, these values can be very useful in estimating the time it will take for a join to run, and the size of the output of a join. With these values, the optimizer can recursively decide on estimates to compare between physical plans.
 
+<!-- TODO: What metadata is collected? When is it collected? On every write would serialize access. -->
+
 Potentially the hardest challenge in optimizing queries is deciding on a join ordering, then on which join algorithms to use. Indeed, we would like for joins to result in smaller tables as soon as possible, but it is impossible to know the size of a join before executing is. However, using information about table sizing, we can get a decent estimate over which order to impose.
 
+<!-- TODO: This could be expanded. Local search? Estimation techniques and examples? -->
+
 There are a few difficulties with this approach. First, once we start making estimates based on estimated values, our margin of error expands exponentially. Indeed, cost estimation is an incredibly inexact science, and often query plans execute much differently than expected. Moreover, because it is nearly impossible to explore the entire search space, deciding which plan to evaluate next is also a challenge.
+
+<!-- TODO: Write about code generation -->

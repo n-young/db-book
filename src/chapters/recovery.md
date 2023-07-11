@@ -2,7 +2,7 @@
 title: Recovery
 ---
 
-<!-- TODO: This needs a lot more detail -->
+This chapter is all about recovery. How do we ensure that we don't lose any data when our database crashes? How can we maintain a consistent view of the database when it comes back up?
 
 ## Write-Ahead Logging
 
@@ -14,7 +14,7 @@ You might be tempted to remark that write-ahead logging seems redundant and slow
 
 ## Log Types
 
-There are five kinds of logs in our database: TABLE logs, EDIT logs, START logs, COMMIT logs, and CHECKPOINT logs.
+There are five kinds of logs in a typical relational: TABLE logs, EDIT logs, START logs, COMMIT logs, and CHECKPOINT logs.
 
 TABLE logs signify the creation of a table. The structure of a TABLE log is `< create tblType table tblName >`, where `tblType` is either `hash` or `btree`, and `tblName` is the name of the table.
 

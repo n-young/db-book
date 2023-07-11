@@ -1,8 +1,12 @@
 chapters:
   - title: Databases
     id: databases
-  # - title: Interfaces
-  #   id: interface
+  # - title: Relational Algebra
+  #   id: relational
+  # - title: Constraints
+  #   id: constraint
+  - title: SQL
+    id: sql
   - title: Storage
     id: storage
   - title: Indexing
@@ -13,5 +17,5 @@ chapters:
   #   id: transaction
   - title: Locking
     id: locking
-  - title: Recovery
-    id: recovery
+  # - title: Recovery
+  #   id: recovery

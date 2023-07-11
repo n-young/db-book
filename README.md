@@ -6,6 +6,4 @@ To build the website, run `go get github.com/n-young/goo`, then `go build site.y
 
 ## Future Work
 
-- Write recovery, diagrams, examples
-- Write interfaces, transactions,
-- Write about linear hashing, distributed joins, replication
+- Write interfaces, transactions, distributed databases, linear hashing
