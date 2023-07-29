@@ -253,16 +253,22 @@ UNION -- Add the top set to the bottom set
 
 ## Subqueries
 
-<!-- TODO: -->
+Sometimes for very complex queries, it is helpful to break a query up into several smaller queries, then combine their results. This is achievable using SQL subqueries, which can be nested inside of a SELECT, INSERT, UPDATE, or DELETE statement by enclosing the subquery with parentheses. For example:
+
+```sql
+(SELECT * FROM Person WITH age == (
+    SELECT MAX(age) FROM Person
+));
+```
+
+It is often helpful to avoid nesting by naming the subqueries:
+```sql
+WITH maximum_age(age) AS (SELECT MAX(age) FROM Person)
+SELECT * FROM Person WITH age == maximum_age.age;
+```
 
 -- 
 
-## Window Functions
-
-<!-- TODO: -->
-
----
-
 ## Where to now?
 
-There is a whole host of advanced SQL functions, including subqueries, views, triggers, indices, functions, recursion, and more. Depending on the system you are using or building, a different set of these features may be available at varying levels of fidelity. I recommend you peruse the [Postgresql documentation](https://www.postgresql.org/docs/)!
+There is a whole host of advanced SQL functions, including views, triggers, indices, functions, recursion, and more. Depending on the system you are using or building, a different set of these features may be available at varying levels of fidelity. For reference on what might be available, peruse the [PostgreSQL documentation](https://www.postgresql.org/docs/)!

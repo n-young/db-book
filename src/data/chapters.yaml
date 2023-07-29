@@ -3,8 +3,10 @@ chapters:
     id: databases
   # - title: Relational Algebra
   #   id: relational
-  # - title: Constraints
-  #   id: constraint
+  - title: Constraints
+    id: constraint
+  - title: Normalization
+    id: normalization
   - title: SQL
     id: sql
   - title: Storage
@@ -17,5 +19,11 @@ chapters:
   #   id: transaction
   - title: Locking
     id: locking
-  # - title: Recovery
-  #   id: recovery
+  - title: Recovery
+    id: recovery
+  # - title: Distributed Databases
+  #   id: distributed
+  # - title: NoSQL Databases
+  #   id: distributed
+  # - title: Timeseries Databases
+  #   id: distributed

@@ -65,8 +65,6 @@ To answer questions about the data, a database needs a query engine. This query 
 
 On top of these components, the database may be outfitted with extra machinery to ensure that it works in a distributed or multi-tenant setting. We'll get to these concerns later.
 
-<!-- TODO: Diagram of a database -->
-
 ## Different Needs, Different Databases
 
 Looking at this from a different point of view (i.e. from a user's point of view), how should one choose which database to use? Perhaps a more salient question, then, is what makes databases different?

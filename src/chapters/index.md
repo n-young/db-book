@@ -18,7 +18,7 @@ Nearly all database systems stores their data in primary key order. Building an 
 
 However, we aren't limited to building indexes over primary keys; we can build indexes over any attribute we like. Depending on what queries you expect from your users, a database operator might choose to build indexes over different attributes, and indexes can be built and destroyed over the lifetime of a database as needs change. However, building an index over any attribute raises a few problems. Firstly, we don't have the ordered property we had before, meaning we truly do need to store every value in the index. Thus, secondary key indexes are called **dense indexes**, since they referenc  every value in the database. Secondly, we don't have the uniqueness property we had before, meaning we may have duplicate keys involved. This makes binary searching slightly more complicated, but is uncomplicated to handle. As a result of these two considerations, it may be clear that building an index over a secondary key is sometimes too costly to be worth it, as storing and maintaining it is a nontrivial task.
 
-<!-- TODO: Primary vs Secondary Index Diagram -->
+![primary+secondary](/static/posts/index/indexes.png)
 
 Now that we've seen the motivation and categorization of indexes, let's move into a few indexing methods.
 
@@ -32,7 +32,7 @@ For all of our hash-based indexing methods, we will need to choose a hash functi
 
 The first indexing method we'll explore is called **static hashing**. In static hashing, we first choose a hash function $H$, then a global modulus $M$. A static hash table consists of a table and $M$ buckets, where bucket $i$ is denoted $b_i$. On **insertion** of a row $R$ with search key $r_i$, we first compute $H(r_i)$ and insert the location of $R$ at the end of bucket $b_{H(r_i) \mod M}$. On **lookup** of row $R$, we do the same calculation, then scan through bucket $b_{H(r_i) \mod M}$ until we find the entry, then access it in a data block. On **deletion** of a row $R$, we do the same calculation, then scan through bucket $b_{H(r_i) \mod M}$ until we find the entry, then delete it.
 
-<!-- TODO: Static Hashing Diagram -->
+![static_hashing](/static/posts/index/static.png)
 
 Indexes are stored on disk, just like data blocks, and the first question that should come to mind is how each indexing method is stored on disk. Each bucket is represented by it's own page. Once a bucket has too many entries to fit in one page, overflow pages are created to hold extra entries. This is clearly an issue; very quickly, if our value of $M$ was too small, we will end up having to do linear scans through multiple overflow blocks, reducing our scheme to a linear search. This is no good, and is a primary reason why static hashing is never used in practice.
 
@@ -42,7 +42,7 @@ Extendible hashing is a method of hashing that adapts as data is added. This is 
 
 An extendible hash table has two moving parts: the table and the buckets. The table is essentially an array of pointers to buckets. Each bucket has a *local depth*, denoted $d_i$, which is the number of trailing bits that every element in that bucket has in common. The table also has a *global depth*, denoted $d$, that is the maximum of the buckets' local depths. When we initialize it, the extendible hash table should look just like the static hash table with some extra bookkeeping.
 
-<!-- TODO: Extensible Hashing Diagram -->
+![static_hashing](/static/posts/index/extensible.png)
 
 On **lookup** of a row $R$, the search key $r_i$ is hashed, and then the table is used to determine the bucket that we should look at. The last $d$ bits of the search key's hash are used as the key to the table, and then we do a linear scan over the bucket it points to.
 
@@ -56,9 +56,11 @@ When a value is inserted into a hash table, one of two things can happen: either
 
 *It's worth noting that while we talk about "prepending" as if we are dealing with strings, in actuality, this action is done entirely through the bit-level representation of integers. Think about what you would have to add to a search key to effectively prepend its bit representation with a 1 or a 0.*
 
-<!-- TODO: Extensible Hashing Splitting Diagram -->
-
 If a bucket overflows and ends up with a local depth greater than the global depth, we need to increase the global depth to maintain a global depth equal to the maximum of the buckets' local depths. To remedy this, we double the size of the hash table by appending it to itself and increasing global depth by 1. Then, we can iterate through and make sure that the buckets are all being pointed to by the correct slots in the hash table. In particular, the bucket that just split should have its slots corrected.
+
+To hammer home this point, consider the following diagram; the left hand side shows the table before the addition of the value "19". As you can see, the hash table was doubled in size, but a new bucket was only made for the bucket index that overflowed.
+
+![split](/static/posts/index/split.png)
 
 It is possible that after a split, all of the values in the old bucket ended up in the same bucket, immediately triggering a second split. This can be caused by a bad hash function (imagine a hash function that maps all inputs to the same output), too many duplicates, or due to an *adversarial workload*. There are many ways to handle recursive splitting, all of which are outside the scope of this chapter.
 
@@ -70,7 +72,7 @@ Tree-based indexing schemes allow for logarithmic-time inserts, updates, and del
 
 ### BTrees
 
-![btree](/static/posts/project/b+tree/btree.jpeg)
+![btree](/static/posts/index/btree.jpeg)
 
 A BTree is a self-balancing recursive data structure that allows logarithmic time search, insertion, and deletion. It is a generalization of the binary search tree in that each node can have more than 1 search key and more than 2 children. A BTree of order $m$ is formally defined as a tree that satisfies the following properties:
 
@@ -107,7 +109,7 @@ To explore how some of these BTree operations work, try out this [online visuali
 
 ### B+Trees
 
-![b+tree](/static/posts/project/b+tree/b+tree.jpeg)
+![b+tree](/static/posts/index/b+tree.jpeg)
 
 Now that we understand BTrees, it's time to explore what a B+Tree is. A B+Tree is a BTree with a few important changes:
 

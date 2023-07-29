@@ -2,8 +2,6 @@
 title: Transactions
 ---
 
-<!-- TODO: This needs a lot more detail -->
-
 ## Transactions
 
 Transactions are a way of grouping multiple actions into one, ACID-compliant package. That is to say, we are guaranteed that either all of the actions in a transaction succeed or none of them succeed, and that they are isolated from other transactions. Transactions acquire locks on the resources they are accessing to be sure that they can read and write safely. Critically, notice that the nature of transaction-level locks and data structure-level locks are very different. Transaction locks are completely unaware of the underlying representation of the data; we're only concerned in logical units to preserve the integrity of the external view of the database. On the other hand, data structure-level locks are completely unaware of the data its locking; only the structure of how the data is stored. Thus, these two locking schemes are completely orthogonal to one another, and yet, are both essential for a database serving multiple tenants concurrently.

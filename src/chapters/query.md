@@ -27,17 +27,17 @@ Consider a query plan with the following substructure: $\sigma_{A_c}(A \bowtie B
 
 Consider a query plan with a complicated conjunctive condition in a filter, like: $\sigma_{c_1 \wedge c_2 \wedge c_3}(A)$. We can instead apply the filters one after another in order, like so: $\sigma_{c_1}(\sigma_{c_2}(\sigma_{c_3}(A)))$. We can commute these conjunctions in any order (do to commutativity of boolean operators) and choose the order that will leave us with the smallest relation as early as possible. The reason this may save some time is that it allows us to spend less time evaluating unnecessary parts of the predicate. However, if the predicate is simple, this optimization may only end up hurting our computation as we are usually disk- instead of cpu-bound. However, the inverse optimization is also valid, in case we want to combine multiple selections! This optimization is called **cascading conjunctions**.
 
-<!-- TODO: Selectivity Factors (in System R) -->
-
 Consider a query plan that only outputs column $c$ of a set of columns $C$ of a schema $S$, without operating on any other columns. Then, instead of selecting all of the columns of $S$, we can instead only select values in $c$. In other words, we will add a projection after the selection to limit the amount of unused information flowing through our query. This optimization is called **column filtering**.
 
 Many such rules can be dreamt up and used, and depending on slight changes in the data and execution model, different rules could be effective. Choices on whether to apply each rule once or many times or until convergence are up to the database designer.
 
 ## Query Execution Algorithms
 
-Now that we've reduced our logical query plan to a more optimized form, we'll need to decide how exactly we should execute it; that is, which algorithms we should ask our database engine to use to evaluate each step of the query plan. Indeed, for each operation we could be doing, multiple valid algorithms exist with different time and space complexities. We'll go over the canonical algorithms for joins (algorithms for selection boil down to using indexes when we can, and for the rest are not particularly interesting).
+Now that we've reduced our logical query plan to a more optimized form, we'll need to decide how exactly we should execute it; that is, which algorithms we should ask our database engine to use to evaluate each step of the query plan. Indeed, for each operation we could be doing, multiple valid algorithms exist with different time and space complexities. We'll gloss over scans, then go over the canonical algorithms for joins (algorithms for selection boil down to using indexes when we can, and for the rest are not particularly interesting).
 
-<!-- TODO: Page and index scans -->
+### Scans
+
+In order to actually have any data in memory to work with, we must first scan it from our tables. For the most part, we have two main choices: scan over the relevant blocks without an index, or rely on an index and do an index scan. While it might seem that an index scan is superior, depending on the query, different scanning approaches may be more suitable. For example, if a query is a restrictive range query over a nonprimary attribute with an index over it, then using that index might make sense; however, if it isn't a particularly restrictive range query, then using the secondary index might cause many unnecesary page evictions as we access pages out of order. Indeed, in this case it may be smarter to simply read all of the rows, then filter them out. Another consideration is sortedness; say we would like to apply a merge-join later; scanning in order might allow us to avoid a merge-sort later, which can save time. Optimizing for all these cases is difficult, and often left to a cost optimizer.
 
 ### Loop Joins
 
@@ -87,37 +87,29 @@ Next, when we want to check if a particular element is in the set, we hash it $n
 
 Applying this to the Grace hash join, we will construct Bloom filters on each bucket of the inner relation, then during the probing step, first check to see if each value in the outer relation's $i$-th bucket is definitely not in the Bloom filter. This will save us time, especially when joins return few tuples!
 
-### Sort Merge Joins
+### Sort Merge Join and External Sort
 
-<!-- TODO: Explain this better -->
+In the case that our input relations are sorted, we can use a **sort merge join**. A sort merge join essentially uses one pointer per relation, and runs through each relation outputting pairs that match on the join key. This join exploits the fact that, when joining over a sorted field, matching tuples will be in the same relative region of their respective sorted tables. Special case should be taken when there are duplicates, but this is an overall rather intuitive algorithm to describe and implement. The difficult part is sorting the relation.
 
-In the case that our input relations are sorted, we can use a **sort merge join**. A sort merge join essentially uses one pointer per relation, and runs through each relation outputting pairs that match on the join key. Special case should be taken when there are duplicates, but this is an overall rather intuitive algorithm to describe and implement. The difficult part is sorting the relation.
+If the relation isn't already sorted by primary key, then we have to do some work to sort it. Thankfully, the classic merge sort algorithm generalizes great to our setting, because we can treat each block like an array segment. However, instead of doing the entire search in memory, we write out intermediate sorted blocks. This algorithm is known as **external sort**. The algorithm proceeds as follows:
 
-If the relation isn't already sorted by primary key, then we have to do some work to sort it. Thankfully, the classic merge sort algorithm generalizes great to our setting, because we can treat each block like an array segment. However, instead of doing the entire search in memory, we write out intermediate sorted blocks. The algorithm proceeds as follows: first, sort each block in memory and write it out to disk. Then, take pairs of adjacent blocks into disk, and merge sort them, writing the intermediate blocks out to disk. Then, take the first block of two sorted segments, and merge sort those two until reaching the end of a block, in which case moving on to the next block in that segment. It proceeds until the whole segment is sorted and on disk.
+1. Sort each block in memory and write them out to disk. Each block is currently its own sorted chunk.
+2. On iteration $k$, read the first block of adjacent sorted chunks into memory and merge sort them, using a block-sized buffer. As this buffer fills up, write it out to a new chunk. Proceed for all chunks from iteration $k-1$.
+4. Proceed until the whole table is sorted.
 
-<!-- TODO: Extenal Sort -->
+![external](/static/posts/query/external.png)
 
-Since when we are on iteration $k$, data from iteration $k-2$ is now useless, we can get away with only using $2N$ extra bytes of space if the original relation was stored using $N$ bytes. Once we have a sorted relation we can apply sort merge join.
-
-<!-- TODO: Didn't explain sort merge join LOL -->
-
-<!-- TODO: Parallelizing multiple joins -->
-
-Now that we've seen a plethora of join algorithms, it's time to see how the cost-based optimizer takes these candidate algorithms into account and decides on a physical query plan.
+Notice that when we are on iteration $k$, data from iteration $k-2$ is now useless, we can get away with only using $2N$ extra bytes of space if the original relation was stored using $N$ bytes. Notice also that this is a somewhat parallelizable task; indeed, it is often parallelized. Once we have a sorted relation we can apply sort merge join. Now that we've seen a plethora of join algorithms, it's time to see how the cost-based optimizer takes these candidate algorithms into account and decides on a physical query plan.
 
 
 ## Cost-Based Optimization
 
-To decide on a query plan, the optimizer repeatedly proposes a physical plan and estimates the runtime, or cost, of that physical plan until it reaches a point where it is satisfied. This is a delicate balancing act between finding a good physical plan and wasting time looking for a better physical plan; indeed, the query optimization problem is very difficult, and achieving optimality is often impossible.
+To decide on a query plan, the optimizer repeatedly proposes a physical plan and estimates the runtime, or cost, of that physical plan until it reaches a point where it is satisfied. This is a delicate balancing act between finding a good physical plan and wasting time looking for a better physical plan; indeed, the query optimization problem is very difficult, and achieving optimality for large enough queries is often impossible. To see why, remember that joins are both commutative and associative; as a result of commutativity, for a query using $n$ tables there are at least $n!$ possible join orderings, and as a result of associativity, there are at least the $n$-th Catalan number of possible join groupings. Combining these, plus the number of different join algorithms we could use yields a gargantuan number.
 
-The optimizer can't compute cost without some statistics about the database. Most databases collect metadata about the size of their tables, the relative density and distribution of the data, and other metrics that may be useful in query planning. Indeed, these values can be very useful in estimating the time it will take for a join to run, and the size of the output of a join. With these values, the optimizer can recursively decide on estimates to compare between physical plans.
+The optimizer can't compute cost without some statistics about the database. Most databases collect metadata about the size of their tables, the relative density and distribution of the data, and other metrics that may be useful in query planning. Indeed, these values can be very useful in estimating the time it will take for a join to run, and the size of the output of a join. With these values, the optimizer can recursively decide on estimates to compare between physical plans. The hardest challenge in optimizing queries is deciding on a join ordering, then on which join algorithms to use. Indeed, we would like for joins to result in smaller tables as soon as possible, but it is impossible to know the size of a join before executing is. However, using information about table sizing, we can get a decent estimate over which order to impose.
 
-<!-- TODO: What metadata is collected? When is it collected? On every write would serialize access. -->
+There are a few difficulties with this approach. First, once we start making estimates based on estimated values, our margin of error expands exponentially. Indeed, cost estimation is an incredibly inexact science, and often query plans execute much differently than expected. Moreover, because it is nearly impossible to explore the entire search space, deciding which plan to evaluate next is also a challenge. We leave further exploration of the realm of query optimization for another text.
 
-Potentially the hardest challenge in optimizing queries is deciding on a join ordering, then on which join algorithms to use. Indeed, we would like for joins to result in smaller tables as soon as possible, but it is impossible to know the size of a join before executing is. However, using information about table sizing, we can get a decent estimate over which order to impose.
+## Code Generation
 
-<!-- TODO: This could be expanded. Local search? Estimation techniques and examples? -->
-
-There are a few difficulties with this approach. First, once we start making estimates based on estimated values, our margin of error expands exponentially. Indeed, cost estimation is an incredibly inexact science, and often query plans execute much differently than expected. Moreover, because it is nearly impossible to explore the entire search space, deciding which plan to evaluate next is also a challenge.
-
-<!-- TODO: Write about code generation -->
+At the end of the road, we've decided on a query plan, and for each relational node, an algorithm to use. Now, we will convert this query plan into executable code for our database engine to ingest and run. As this is more a concern for compiler-writers, we eschew a lengthy discussion of code generation.

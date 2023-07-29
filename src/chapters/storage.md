@@ -15,7 +15,7 @@ Storage types differ in a few important comparable fields beyond price and speed
 
 Let's go through the **storage hierarchy** from cheapest and slowest to priciest and fastest, comparing on these metrics.
 
-<!-- TODO: Storage hierarchy diagram -->
+![heirarchy](/static/posts/storage/heirarchy.png)
 
 ### Backup Storage
 
@@ -27,7 +27,7 @@ The first consequential category of storage is **nonvolatile storage**, otherwis
 
 There are a few choices when it comes to disk. The classic disk we are used to is called a **hard disk drive**, or HDD. A HDD consists of a set of disks, each with its own disk head which can be used to read or write from the disk. When operating, all of the disks will spin quickly, and the disk heads will move across the disks to perform operations. Each disk in an HDD is split up into radial sections called **sectors**, where data is read and written only in sector-sized components. A few things fall out of this design. Firstly, reading sequentially from a HDD is much faster than reading randomly from an HDD. Reading sequentially only incurs one "seek", which can take milliseconds (an eternity for computers), whereas random reads incur a seek for each block of data read. Secondly, because we usually have multiple disks and disk heads, we have a few choices on how we want to split up our data among disk. Topics like disk striping and RAID redundancy are beyond the scope of this chapter, however. Lastly, while still much slower than volatile storage, HDDs are fast enough to be used in everyday computing, and so are equipped by many modern computers.
 
-<!-- TODO: HDD Diagram -->
+![hdd](/static/posts/storage/disk.jpg)
 
 In the last decade or so, **solid state drives** or SSDs have become much more popular for consumer electronics. SSDs, unlike HDDs, are able to perform random reads and writes just as quickly as sequential reads and writes, as well as being in general much faster than HDDs. As a result, their popularity has ballooned and they have all but replaced HDDs. However, SSDs are a tad bit more expensive than HDDs, and they don't last quite as long. Indeed, an SSD can only be written to so many times before it breaks; in fact, one of the primary mechanisms that allows SSDs to work is one that remaps broken sectors to unbroken sectors. As sectors break throughout the lifetime of the SSD, your viable storage size will shrink, and the disk will slowly die. For short term consumer electronics or databases which are more read- than write-heavy, SSDs may be a great option.
 
@@ -57,11 +57,11 @@ Given a set of records, we have many potential strategies of storing them. One s
 
 With fixed-length records, laying them out end-to-end in a page is not a bad idea. There are two canonical ways of doing this: in row-major order and in column-major order. In row-based systems, each record is stored in whole before the next. This allows us to access an entire record by only reading one page, and makes writing new records very easily. In column-based systems, all of the records' first field is stored first, then the second field, and so on. While this might seem ridiculous, if we only care about a certain field of a table (say, to calculate a metric), then with sequential reading, we can get all of the salient values much quicker. The former is much more common in OLTP-optimized systems, and the latter in OLAP-optimized systems. We can get the best of both worlds in a hybrid setup, where we store `n` instances of the first field, then `n` of the second field, and so on, before starting again with the first field. This allows us to benefit slightly from sequential reads while not fully giving up some niceness in quick tuple addition. As we will see later, storing tuples so that they are ordered on some field is incredibly useful for optimization purposes. Think about how each of these conventions affect the complexity of maintaining an order.
 
-<!-- TODO: Row vs column store diagram -->
+![row_column](/static/posts/storage/row_col.png)
 
 With variable-length records, our work is a bit harder. In particular, one huge loss, if implemented naively, is that we can no longer jump to a particular record in a page in constant time (before, we could have determined the position of entry `N` in page `p` by calculating `(N % PAGE_SIZE) // TUPLE_LENGTH`). How should we get past this? One method of storing variable-length records is using what are known as **slotted pages**.
 
-<!-- TODO: Slotted pages diagram -->
+![slotted_pages](/static/posts/storage/slotted_page.png)
 
 A slotted page works as follows. Each page is split up into three regions: a header and slotted region at the front, a data region at the back, and a free region in the middle. The header describes the basic metrics of the page, including how many items are in this page, where the header region ends, and where the data region begins.
 
